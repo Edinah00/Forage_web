@@ -43,6 +43,10 @@
                     <a href="${pageContext.request.contextPath}/demande/modifier/${demande.id_demande}">Modifier</a>
                     |
                     <a href="${pageContext.request.contextPath}/demande/supprimer/${demande.id_demande}">Supprimer</a>
+
+                    <a href="${pageContext.request.contextPath}/demande/valider/${demande.id_demande}">Valider</a>
+
+                    <a href="${pageContext.request.contextPath}/demande/refuser/${demande.id_demande}">Refuser</a>
                 </td>
             </tr>
         </c:forEach>

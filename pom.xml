@@ -25,11 +25,30 @@
       <version>${spring.version}</version>
     </dependency>
 
-    <!-- Spring JDBC pour la BDD -->
+    <!-- Spring Data JPA -->
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-jpa</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
+    <!-- Spring ORM / Transactions -->
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
+      <artifactId>spring-orm</artifactId>
       <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <!-- Hibernate -->
+    <dependency>
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>6.6.11.Final</version>
     </dependency>
 
     <!-- Servlet API (Tomcat la fournit, scope provided) -->

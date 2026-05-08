@@ -73,5 +73,15 @@ public class DemandeController {
         demandeService.supprimerDemande(id);
         return "redirect:/formulaire";
     }
+    @GetMapping("/demande/valider/{id}")
+    public String validerDemande(@PathVariable("id") int id) {
+        demandeService.validerDemande(id);
+        return "redirect:/formulaire";
+    }
+    @GetMapping("/demande/refuser/{id}")
+    public String refuserDemande(@PathVariable("id") int id) {
+        demandeService.refuséDemande(id);
+        return "redirect:/formulaire";
+    }
 
 }
