@@ -25,7 +25,7 @@ public class DemandeController {
 
     @Autowired
     private CommuneRepository communeRepository;
-
+    
     @GetMapping("/formulaire")
     public String afficherFormulaire(Model model) {
         model.addAttribute("demande", new Demande()); // ✅ objet vide envoyé à la vue
