@@ -1,441 +1,222 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html>
+<%@ taglib prefix="c"    uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestion des demandes</title>
-    <style>
-        :root {
-            --bg: #f4f7fb;
-            --card: #ffffff;
-            --text: #1f2937;
-            --muted: #6b7280;
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --border: #dbe3ef;
-            --table-head: #eef4ff;
-            --success: #16a34a;
-            --danger: #dc2626;
-        }
+<meta charset="UTF-8">
+<title>Demandes — Forage Web</title>
+<style>
+/* ─── Reset ─────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#f0f4fa;color:#1e293b;min-height:100vh}
 
-        * {
-            box-sizing: border-box;
-        }
+/* ─── Navbar ────────────────────────────────────────────────────────── */
+.navbar{
+  background:linear-gradient(90deg,#0f172a 0%,#1e3a8a 100%);
+  padding:0 24px;display:flex;align-items:center;justify-content:space-between;
+  height:60px;box-shadow:0 2px 12px rgba(15,23,42,.25);
+}
+.navbar-brand{color:#fff;font-size:1.2rem;font-weight:700;text-decoration:none}
+.navbar-brand span{color:#60a5fa}
+.navbar-links{display:flex;gap:6px}
+.navbar-links a{color:#cbd5e1;text-decoration:none;padding:7px 13px;border-radius:8px;font-size:.93rem;transition:background .15s}
+.navbar-links a:hover,.navbar-links a.active{background:rgba(255,255,255,.12);color:#fff}
 
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: linear-gradient(180deg, #eff6ff 0%, var(--bg) 35%, #edf2f7 100%);
-            color: var(--text);
-            min-height: 100vh;
-        }
+/* ─── Layout ────────────────────────────────────────────────────────── */
+.page{max-width:1200px;margin:28px auto;padding:0 16px;display:flex;flex-direction:column;gap:20px}
 
-        .page {
-            width: 100%;
-            max-width: none;
-            margin: 0;
-            padding: 8px;
-        }
+/* ─── Page header ───────────────────────────────────────────────────── */
+.page-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.page-header h1{font-size:1.6rem;color:#0f172a}
+.page-header p{font-size:.95rem;color:#64748b;margin-top:4px}
 
-        .layout {
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            gap: 12px;
-            align-items: start;
-        }
+/* ─── Card ──────────────────────────────────────────────────────────── */
+.card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 4px 20px rgba(15,23,42,.07)}
+.card h2{font-size:1.15rem;color:#0f172a;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #e5e7eb}
 
-        .sidebar {
-            position: sticky;
-            top: 8px;
-            min-height: calc(100vh - 16px);
-            padding: 18px 14px;
-            border-radius: 16px;
-            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-            color: #e2e8f0;
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
-        }
+/* ─── Alert ─────────────────────────────────────────────────────────── */
+.alert{padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:.95rem}
+.alert-success{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.alert-error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
 
-        .brand {
-            margin-bottom: 18px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid rgba(226, 232, 240, 0.12);
-        }
+/* ─── Form grid ─────────────────────────────────────────────────────── */
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{font-size:.91rem;font-weight:700;color:#334155}
+.field input,.field select{
+  border:1px solid #dbe3ef;border-radius:10px;padding:11px 14px;
+  font-size:.97rem;background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.field input:focus,.field select:focus{
+  border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+.full{grid-column:1/-1}
+.actions{margin-top:16px;display:flex;justify-content:flex-end;gap:10px}
 
-        .brand h1 {
-            margin: 0 0 8px;
-            font-size: 1.5rem;
-            color: #fff;
-        }
+/* ─── Buttons ───────────────────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;padding:10px 18px;
+  border-radius:10px;font-size:.95rem;font-weight:700;text-decoration:none;
+  cursor:pointer;border:0;transition:transform .15s,background .15s,box-shadow .15s;
+}
+.btn-primary{background:#2563eb;color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.2)}
+.btn-primary:hover{background:#1d4ed8;transform:translateY(-1px)}
+.btn-ghost{background:#eff6ff;color:#2563eb}
+.btn-ghost:hover{background:#dbeafe}
+.btn-danger{background:#fef2f2;color:#dc2626}
+.btn-danger:hover{background:#fee2e2}
+.btn-success{background:#f0fdf4;color:#16a34a}
+.btn-success:hover{background:#dcfce7}
 
-        .brand p {
-            margin: 0;
-            color: #94a3b8;
-            font-size: 0.92rem;
-            line-height: 1.5;
-        }
+/* ─── Table ─────────────────────────────────────────────────────────── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:800px}
+th,td{padding:11px 12px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:middle}
+th{background:#eef4ff;color:#1e3a8a;font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+tbody tr:hover{background:#f8faff}
 
-        .nav-title {
-            margin: 0 0 12px;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: #94a3b8;
-        }
+/* ─── Badge ─────────────────────────────────────────────────────────── */
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.82rem;font-weight:700}
+.badge-blue{background:#eff6ff;color:#1d4ed8}
+.badge-green{background:#f0fdf4;color:#15803d}
+.badge-red{background:#fef2f2;color:#b91c1c}
+.badge-gray{background:#f1f5f9;color:#475569}
 
-        .nav {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.empty{text-align:center;color:#94a3b8;padding:24px;font-size:.95rem}
 
-        .nav a {
-            display: block;
-            padding: 12px 14px;
-            border-radius: 14px;
-            color: #e2e8f0;
-            text-decoration: none;
-            background: rgba(148, 163, 184, 0.08);
-            transition: background 0.15s ease, transform 0.15s ease;
-        }
-
-        .nav a:hover {
-            background: rgba(37, 99, 235, 0.25);
-            transform: translateX(2px);
-        }
-
-        .sidebar-card {
-            margin-top: 22px;
-            padding: 16px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .sidebar-card strong {
-            display: block;
-            margin-bottom: 6px;
-            color: #fff;
-        }
-
-        .sidebar-card span {
-            color: #cbd5e1;
-            font-size: 0.92rem;
-            line-height: 1.5;
-        }
-
-        .content {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
-            padding: 18px;
-        }
-
-        .card h2 {
-            margin: 0 0 18px;
-            font-size: 1.25rem;
-        }
-
-        .message {
-            margin-bottom: 12px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            background: #ecfdf5;
-            color: var(--success);
-            border: 1px solid #bbf7d0;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .field {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .field label {
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: #334155;
-        }
-
-        .field input,
-        .field select {
-            width: 100%;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 14px;
-            font-size: 0.98rem;
-            background: #fff;
-            outline: none;
-        }
-
-        .field input:focus,
-        .field select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
-        }
-
-        .field.full {
-            grid-column: 1 / -1;
-        }
-
-        .actions {
-            margin-top: 14px;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .btn {
-            border: 0;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 0.98rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-ghost {
-            background: #eff6ff;
-            color: var(--primary);
-        }
-
-        .table-wrap {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 820px;
-        }
-
-        th, td {
-            padding: 11px 10px;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-            vertical-align: top;
-        }
-
-        th {
-            background: var(--table-head);
-            color: #1e3a8a;
-            font-size: 0.92rem;
-        }
-
-        tbody tr:hover {
-            background: #f8fbff;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-        .row-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .link-danger {
-            color: var(--danger);
-        }
-
-        .empty-state {
-            text-align: center;
-            color: var(--muted);
-            padding: 18px 12px;
-        }
-
-        @media (max-width: 720px) {
-            .layout {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                position: relative;
-                min-height: auto;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .card {
-                padding: 14px;
-            }
-        }
-    </style>
+@media(max-width:680px){
+  .form-grid{grid-template-columns:1fr}
+  .navbar-links a{padding:6px 9px;font-size:.85rem}
+}
+</style>
 </head>
 <body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="navbar-brand" href="${pageContext.request.contextPath}/accueil">Forage<span>Web</span></a>
+  <div class="navbar-links">
+    <a href="${pageContext.request.contextPath}/accueil">Accueil</a>
+    <a class="active" href="${pageContext.request.contextPath}/formulaire">Demandes</a>
+    <a href="${pageContext.request.contextPath}/devis">Devis</a>
+  </div>
+</nav>
+
 <div class="page">
-    <div class="layout">
-        <aside class="sidebar">
-            <div class="brand">
-                <h1>Forage Web</h1>
-                <p>Gestion des demandes, clients et communes depuis une interface simple.</p>
-            </div>
 
-            <p class="nav-title">Navigation</p>
-            <nav class="nav">
-                <a href="${pageContext.request.contextPath}/formulaire">Ajouter une demande</a>
-                <a href="${pageContext.request.contextPath}/demandes">Liste des demandes</a>
-                <a href="${pageContext.request.contextPath}/formulaire">Accueil</a>
-            </nav>
-
-            <div class="sidebar-card">
-                <strong>Astuce</strong>
-                <span>Les sélections client et commune viennent directement de la base de données.</span>
-            </div>
-        </aside>
-
-        <main class="content">
-            <div class="hero">
-                <h1>Gestion des demandes</h1>
-                <p>Ajoutez une nouvelle demande puis consultez la liste juste en dessous.</p>
-            </div>
-
-            <div class="grid">
-                <div class="card">
-                    <h2>Ajouter une demande</h2>
-
-                    <c:if test="${not empty message}">
-                        <div class="message">${message}</div>
-                    </c:if>
-
-                    <form:form action="${pageContext.request.contextPath}/Ajout_demande" method="post" modelAttribute="demande">
-                        <form:input path="ref_demande" type="hidden" value="25" />
-
-                        <div class="form-grid">
-                            <div class="field">
-                                <label>Demandeur</label>
-                                <form:select path="id_client">
-                                    <form:option value="">-- Choisir un client --</form:option>
-                                    <c:forEach var="client" items="${clients}">
-                                        <form:option value="${client.idClient}">${client.nomClient}</form:option>
-                                    </c:forEach>
-                                </form:select>
-                            </div>
-
-                            <div class="field">
-                                <label>Date</label>
-                                <form:input path="date_demande" type="date"/>
-                            </div>
-
-                            <div class="field">
-                                <label>Lieu</label>
-                                <form:input path="lieu_demande" placeholder="Ex: Antananarivo"/>
-                            </div>
-
-                            <div class="field">
-                                <label>Commune</label>
-                                <form:select path="id_commune">
-                                    <form:option value="">-- Choisir une commune --</form:option>
-                                    <c:forEach var="commune" items="${communes}">
-                                        <form:option value="${commune.idCommune}">${commune.nomCommune}</form:option>
-                                    </c:forEach>
-                                </form:select>
-                            </div>
-                        </div>
-
-                        <div class="actions">
-                            <input class="btn btn-primary" type="submit" value="Ajouter la demande"/>
-                        </div>
-                    </form:form>
-                </div>
-
-                <div class="card">
-                    <h2>Liste des demandes</h2>
-
-                    <div class="table-wrap">
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Référence</th>
-                                <th>Client</th>
-                                <th>Lieu</th>
-                                <th>Commune</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <c:choose>
-                                <c:when test="${not empty demandes}">
-                                    <c:forEach var="demande" items="${demandes}">
-                                        <tr>
-                                            <td><span class="badge">${demande.id_demande}</span></td>
-                                            <td>${demande.ref_demande}</td>
-                                            <td>${demande.id_client}</td>
-                                            <td>${demande.lieu_demande}</td>
-                                            <td>${demande.id_commune}</td>
-                                            <td>${demande.date_demande}</td>
-                                            <td>
-                                                <div class="row-actions">
-                                                    <a class="btn btn-ghost" href="${pageContext.request.contextPath}/demande/${demande.id_demande}">Voir</a>
-                                                    <a class="btn btn-ghost" href="${pageContext.request.contextPath}/demande/modifier/${demande.id_demande}">Modifier</a>
-                                                    <a class="btn btn-ghost link-danger"
-                                                       href="${pageContext.request.contextPath}/demande/supprimer/${demande.id_demande}"
-                                                       onclick="return confirm('Supprimer cette demande ?');">Supprimer</a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </c:when>
-                                <c:otherwise>
-                                    <tr>
-                                        <td class="empty-state" colspan="7">Aucune demande enregistrée pour le moment.</td>
-                                    </tr>
-                                </c:otherwise>
-                            </c:choose>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </main>
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1>📋 Gestion des demandes</h1>
+      <p>Ajoutez une demande et consultez / gérez la liste ci-dessous.</p>
     </div>
-</div>
+  </div>
 
+  <!-- Alerts -->
+  <c:if test="${not empty message}">
+    <div class="alert alert-success">${message}</div>
+  </c:if>
+  <c:if test="${not empty erreur}">
+    <div class="alert alert-error">${erreur}</div>
+  </c:if>
+
+  <!-- ── Formulaire ajout ──────────────────────────────────────────── -->
+  <div class="card">
+    <h2>➕ Ajouter une demande</h2>
+
+    <%-- Le modelAttribute "demande" DOIT être présent dans le model --%>
+    <form:form action="${pageContext.request.contextPath}/Ajout_demande"
+               method="post" modelAttribute="demande">
+
+      <%-- ref_demande auto-générée côté serveur, on la cache --%>
+      <form:hidden path="ref_demande"/>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="id_client">Demandeur</label>
+          <form:select path="id_client" id="id_client">
+            <form:option value="">— Choisir un client —</form:option>
+            <c:forEach var="client" items="${clients}">
+              <form:option value="${client.idClient}">${client.nomClient}</form:option>
+            </c:forEach>
+          </form:select>
+        </div>
+
+        <div class="field">
+          <label for="date_demande">Date</label>
+          <form:input path="date_demande" id="date_demande" type="date"/>
+        </div>
+
+        <div class="field">
+          <label for="lieu_demande">Lieu</label>
+          <form:input path="lieu_demande" id="lieu_demande" placeholder="Ex : Antananarivo"/>
+        </div>
+
+        <div class="field">
+          <label for="id_commune">Commune</label>
+          <form:select path="id_commune" id="id_commune">
+            <form:option value="">— Choisir une commune —</form:option>
+            <c:forEach var="commune" items="${communes}">
+              <form:option value="${commune.idCommune}">${commune.nomCommune}</form:option>
+            </c:forEach>
+          </form:select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <input class="btn btn-primary" type="submit" value="✔ Enregistrer la demande"/>
+      </div>
+    </form:form>
+  </div>
+
+  <!-- ── Liste des demandes ────────────────────────────────────────── -->
+  <div class="card">
+    <h2>📑 Liste des demandes</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Référence</th><th>Client</th>
+            <th>Lieu</th><th>Commune</th><th>Date</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:choose>
+            <c:when test="${not empty demandes}">
+              <c:forEach var="d" items="${demandes}">
+                <tr>
+                  <td><span class="badge badge-blue">#${d.id_demande}</span></td>
+                  <td>${d.ref_demande}</td>
+                  <td>${d.id_client}</td>
+                  <td>${d.lieu_demande}</td>
+                  <td>${d.id_commune}</td>
+                  <td>${d.date_demande}</td>
+                  <td>
+                    <div class="row-actions">
+                      <a class="btn btn-ghost" href="${pageContext.request.contextPath}/demande/${d.id_demande}">👁 Voir</a>
+                      <a class="btn btn-ghost" href="${pageContext.request.contextPath}/demande/modifier/${d.id_demande}">✏️ Modifier</a>
+                      <a class="btn btn-success" href="${pageContext.request.contextPath}/demande/valider/${d.id_demande}"
+                         onclick="return confirm('Accepter cette demande ?')">✔ Accepter</a>
+                      <a class="btn btn-danger" href="${pageContext.request.contextPath}/demande/refuser/${d.id_demande}"
+                         onclick="return confirm('Refuser cette demande ?')">✘ Refuser</a>
+                      <a class="btn btn-danger" href="${pageContext.request.contextPath}/demande/supprimer/${d.id_demande}"
+                         onclick="return confirm('Supprimer cette demande ?')">🗑</a>
+                    </div>
+                  </td>
+                </tr>
+              </c:forEach>
+            </c:when>
+            <c:otherwise>
+              <tr><td class="empty" colspan="7">Aucune demande enregistrée.</td></tr>
+            </c:otherwise>
+          </c:choose>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /page -->
 </body>
 </html>

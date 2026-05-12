@@ -50,6 +50,50 @@ CREATE TABLE IF NOT EXISTS demande_status (
     FOREIGN KEY (id_status) REFERENCES status(id_status)
 );
 
+ 
+CREATE TABLE IF NOT EXISTS status_devis (
+    id_status_devis INT AUTO_INCREMENT PRIMARY KEY,
+    libelle         VARCHAR(50) NOT NULL
+);
+ 
+CREATE TABLE IF NOT EXISTS devis (
+    id_devis     INT AUTO_INCREMENT PRIMARY KEY,
+    id_demande   INT          NOT NULL,
+    date_devis   DATE         NOT NULL,
+    FOREIGN KEY (id_demande) REFERENCES demande(id_demande)
+);
+ 
+CREATE TABLE IF NOT EXISTS detail_devis (
+    id_detail      INT AUTO_INCREMENT PRIMARY KEY,
+    id_devis       INT            NOT NULL,
+    libelle        VARCHAR(100)   NOT NULL,
+    unite          VARCHAR(30),
+    quantite       DECIMAL(10,2)  NOT NULL DEFAULT 1,
+    prix_unitaire  DECIMAL(15,2)  NOT NULL DEFAULT 0,
+    description    TEXT,
+    montant        DECIMAL(15,2)  GENERATED ALWAYS AS (quantite * prix_unitaire) STORED,
+    FOREIGN KEY (id_devis) REFERENCES devis(id_devis) ON DELETE CASCADE
+);
+ 
+CREATE TABLE IF NOT EXISTS devis_status (
+    id_devis        INT  NOT NULL,
+    id_status_devis INT  NOT NULL,
+    date_status     DATETIME NOT NULL,
+    PRIMARY KEY (id_devis, id_status_devis),
+    FOREIGN KEY (id_devis)        REFERENCES devis(id_devis)             ON DELETE CASCADE,
+    FOREIGN KEY (id_status_devis) REFERENCES status_devis(id_status_devis)
+);
+ 
+
+ INSERT INTO status (id_status, libelle) VALUES
+  (1, 'creé'),
+  (2, 'réfusé'),
+  (3, 'accepté');
+INSERT INTO status_devis (libelle) VALUES
+  ('Envoyé'),
+  ('Accepté'),
+  ('Refusé');
+ 
 INSERT INTO region (nom_region) VALUES
   ('Analamanga'),
   ('Vakinankaratra'),
