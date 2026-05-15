@@ -131,7 +131,7 @@ tbody tr:hover{background:#f8faff}
                method="post" modelAttribute="demande">
 
       <%-- ref_demande auto-générée côté serveur, on la cache --%>
-      <form:hidden path="ref_demande"/>
+      <form:input type="text" path="ref_demande"/>
 
       <div class="form-grid">
         <div class="field">

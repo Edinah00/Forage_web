@@ -125,10 +125,7 @@ footer{text-align:center;padding:28px;color:#94a3b8;font-size:.88rem;border-top:
     <div class="stat-num">${demandesAcceptees}</div>
     <div class="stat-label">Demandes acceptées</div>
   </div>
-  <div class="stat">
-    <div class="stat-num">${totalDevis}</div>
-    <div class="stat-label">Devis créés</div>
-  </div>
+ 
   <div class="stat">
     <div class="stat-num">${totalClients}</div>
     <div class="stat-label">Clients</div>
@@ -148,17 +145,6 @@ footer{text-align:center;padding:28px;color:#94a3b8;font-size:.88rem;border-top:
       <div class="module-links" onclick="event.stopPropagation()">
         <a class="chip" href="${pageContext.request.contextPath}/formulaire">Ajouter</a>
         <a class="chip" href="${pageContext.request.contextPath}/demandes">Liste</a>
-      </div>
-    </a>
-
-    <!-- Devis -->
-    <a class="module-card" href="${pageContext.request.contextPath}/devis" style="--accent:#16a34a">
-      <div class="module-icon">📄</div>
-      <h3>Devis</h3>
-      <p>Créez des devis détaillés uniquement pour les demandes acceptées. Gérez lignes, prix et statuts de chaque devis.</p>
-      <div class="module-links" onclick="event.stopPropagation()">
-        <a class="chip chip-green" href="${pageContext.request.contextPath}/devis/nouveau">Nouveau devis</a>
-        <a class="chip chip-green" href="${pageContext.request.contextPath}/devis">Liste devis</a>
       </div>
     </a>
 

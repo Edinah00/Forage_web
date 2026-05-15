@@ -4,7 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Table;
-
+import java.util.Map;
 import java.time.LocalDateTime;
 
 @Entity
@@ -54,4 +54,5 @@ public class DemandeStatus {
         }
         id.setId_status(id_status);
     }
+    
 }

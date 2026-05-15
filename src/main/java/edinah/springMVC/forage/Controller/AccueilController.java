@@ -15,10 +15,8 @@ public class AccueilController {
 
     @GetMapping({"/", "/accueil"})
     public String accueil(Model model) {
-        long totalDemandes    = demandeService.listerDemandes().size();
-        
+        long totalDemandes    = demandeService.listerDemandes().size();        
         long totalClients = clientRepo.count();
-
         model.addAttribute("totalDemandes",     totalDemandes);
         model.addAttribute("totalClients",      totalClients);
         return "accueil";

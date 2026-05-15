@@ -1,14 +1,11 @@
-
-// ── DetailDevisRepository.java ────────────────────────────────────────────────
 package edinah.springMVC.forage.Repository;
 
-import edinah.springMVC.forage.Model.DetailDevis;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import java.util.List;
-
+import edinah.springMVC.forage.Model.DetailDevis;
 @Repository
 public interface DetailDevisRepository extends JpaRepository<DetailDevis, Integer> {
-    List<DetailDevis> findByIdDevis(int idDevis);
-    void deleteByIdDevis(int idDevis);
+    @Query("SELECT d FROM DetailDevis d WHERE d.devis.id_devis = :idDevis")
+    java.util.List<DetailDevis> findByDevisId(Integer idDevis);
 }

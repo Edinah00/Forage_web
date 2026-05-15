@@ -6,6 +6,9 @@ import java.util.Objects;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Embeddable
 public class DemandeStatusId implements Serializable {
 
@@ -57,4 +60,6 @@ public class DemandeStatusId implements Serializable {
     public int hashCode() {
         return Objects.hash(id_demande, id_status);
     }
+
+   
 }

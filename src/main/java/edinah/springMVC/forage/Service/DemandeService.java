@@ -44,6 +44,10 @@ public class DemandeService {
         return demandeRepository.findById(idDemande).orElse(null);
     }
 
+    public Demande getDemandeByRef(String refDemande) {
+        return demandeRepository.findByRefDemande(refDemande).orElse(null);
+    }
+
     @Transactional
     public int modifierDemande(Demande d) {
         return demandeRepository.save(d).getId_demande();

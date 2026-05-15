@@ -14,6 +14,12 @@ public class Devis {
     @Column(name = "id_devis")
     private int idDevis;
 
+    @Column(name = "id_type_devis")
+    private int idTypeDevis;
+
+    @Column(name = "observation")
+    private String observation;
+
     @Column(name = "id_demande")
     private int idDemande;
 
@@ -22,21 +28,68 @@ public class Devis {
     private LocalDate dateDevis;
 
     // ── getters / setters ──────────────────────────────────
-    public int getId_devis()              { return idDevis; }
-    public void setId_devis(int v)        { this.idDevis = v; }
+    public int getId_devis() {
+        return idDevis;
+    }
 
-    public int getIdDevis()               { return idDevis; }
-    public void setIdDevis(int v)         { this.idDevis = v; }
+    public void setId_devis(int v) {
+        this.idDevis = v;
+    }
 
-    public int getId_demande()            { return idDemande; }
-    public void setId_demande(int v)      { this.idDemande = v; }
+    public int getIdDevis() {
+        return idDevis;
+    }
 
-    public int getIdDemande()             { return idDemande; }
-    public void setIdDemande(int v)       { this.idDemande = v; }
+    public void setIdDevis(int v) {
+        this.idDevis = v;
+    }
 
-    public LocalDate getDate_devis()      { return dateDevis; }
-    public void setDate_devis(LocalDate v){ this.dateDevis = v; }
+    public int getId_demande() {
+        return idDemande;
+    }
 
-    public LocalDate getDateDevis()       { return dateDevis; }
-    public void setDateDevis(LocalDate v) { this.dateDevis = v; }
+    public void setId_demande(int v) {
+        this.idDemande = v;
+    }
+
+    public int getIdDemande() {
+        return idDemande;
+    }
+
+    public void setIdDemande(int v) {
+        this.idDemande = v;
+    }
+
+    public LocalDate getDate_devis() {
+        return dateDevis;
+    }
+
+    public void setDate_devis(LocalDate v) {
+        this.dateDevis = v;
+    }
+
+    public LocalDate getDateDevis() {
+        return dateDevis;
+    }
+
+    public void setDateDevis(LocalDate v) {
+        this.dateDevis = v;
+    }
+
+    public int getIdTypeDevis() {
+        return idTypeDevis;
+    }
+
+    public void setIdTypeDevis(int idTypeDevis) {
+        this.idTypeDevis = idTypeDevis;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
+    }
+
 }
