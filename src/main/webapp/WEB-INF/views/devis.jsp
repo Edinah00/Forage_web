@@ -29,6 +29,28 @@
         .alert { padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; }
         .alert-success { background: #ecfdf5; color: #065f46; }
         .alert-error { background: #fef2f2; color: #991b1b; }
+        .search-error {
+            margin-top: 10px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #fca5a5;
+            background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+            color: #9f1239;
+            font-weight: 700;
+            display: none;
+        }
+        .search-error.visible { display: block; }
+        .search-error small {
+            display: block;
+            margin-top: 4px;
+            font-weight: 400;
+            color: #be123c;
+        }
+        .input-error {
+            border-color: #f87171 !important;
+            background: #fff1f2;
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.14);
+        }
         .hidden { display: none; }
         .table { width: 100%; border-collapse: collapse; margin-top: 14px; }
         .table th, .table td { border-bottom: 1px solid #e2e8f0; padding: 10px 8px; text-align: left; vertical-align: top; }
@@ -56,13 +78,21 @@
         <div class="alert alert-error">${error}</div>
     </c:if>
 
-    <div class="panel">
-        <div class="grid two">
-            <div>
-                <label for="refDemande">Référence demande</label>
-                <input id="refDemande" type="text" placeholder="Ex: DEM-2026-001" onblur="chargerDemande()">
-                <div class="muted">Le détail de la demande se charge automatiquement au `onblur`.</div>
-            </div>
+        <div class="panel">
+            <div class="grid two">
+                <div>
+                    <label for="refDemande">Référence demande</label>
+                    <select id="refDemande">
+                        <option value="">-- choisir une référence --</option>
+                        <c:forEach items="${demandes}" var="demande">
+                            <option value="${demande.ref_demande}">${demande.ref_demande}</option>
+                        </c:forEach>
+                    </select>
+                    <div id="refError" class="search-error">
+                        Référence introuvable.
+                        <small>Choisis une référence existante dans la liste.</small>
+                    </div>
+                </div>
             <div>
                 <label>Type de devis</label>
                 <select id="typeDevis">
@@ -73,6 +103,8 @@
                 </select>
             </div>
         </div>
+
+        <div id="chargementMessage" class="muted" style="margin-top: 10px;"></div>
 
         <div id="demandeBox" class="section hidden">
             <h3>Détail de la demande</h3>
@@ -145,16 +177,38 @@
     const contextPath = '${pageContext.request.contextPath}';
     let details = [];
     let editIndex = -1;
+    window.chargerDemande = function (refValue) {
+        const ref = (refValue ?? document.getElementById('refDemande').value).trim();
+        const message = document.getElementById('chargementMessage');
+        const refInput = document.getElementById('refDemande');
+        const refError = document.getElementById('refError');
 
-    function chargerDemande() {
-        const ref = document.getElementById('refDemande').value.trim();
-        if (!ref) return;
+        refInput.classList.remove('input-error');
+        refError.classList.remove('visible');
+
+        if (!ref) {
+            message.textContent = '';
+            return;
+        }
+
+        message.textContent = 'Recherche de la demande...';
 
         fetch(contextPath + '/devis/demande/' + encodeURIComponent(ref))
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
+                if (!data) {
+                    return;
+                }
                 const box = document.getElementById('demandeBox');
                 if (!data.found || !data.demande) {
+                    message.textContent = 'Aucune demande trouvée pour cette référence.';
+                    refInput.classList.add('input-error');
+                    refError.classList.add('visible');
                     box.classList.remove('hidden');
                     document.getElementById('demandeId').textContent = 'Introuvable';
                     document.getElementById('demandeRef').textContent = ref;
@@ -166,6 +220,9 @@
                 }
 
                 const d = data.demande;
+                message.textContent = 'Demande chargée.';
+                refInput.classList.remove('input-error');
+                refError.classList.remove('visible');
                 box.classList.remove('hidden');
                 document.getElementById('demandeId').textContent = d.id_demande ?? '';
                 document.getElementById('demandeRef').textContent = d.ref_demande ?? '';
@@ -174,10 +231,24 @@
                 document.getElementById('demandeCommune').textContent = d.id_commune ?? '';
                 document.getElementById('demandeDate').textContent = d.date_demande ?? '';
             })
-            .catch(() => {
-                alert('Impossible de charger la demande.');
+            .catch((error) => {
+                message.textContent = 'Erreur lors du chargement de la demande.';
+                refInput.classList.add('input-error');
+                refError.classList.add('visible');
+                refError.innerHTML = 'Impossible de charger la demande.<small>Vérifie la console ou réessaie après correction du serveur.</small>';
+                console.error('chargement demande impossible', error);
             });
-    }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const refInput = document.getElementById('refDemande');
+        if (refInput) {
+            refInput.addEventListener('change', () => chargerDemande(refInput.value));
+            if (refInput.value) {
+                chargerDemande(refInput.value);
+            }
+        }
+    });
 
     function ouvrirFormulaireDetail() {
         editIndex = -1;
@@ -248,17 +319,16 @@
         details.forEach((d, index) => {
             const item = document.createElement('div');
             item.className = 'detail-item';
-            item.innerHTML = `
-                <div><div class="muted">Libellé</div><div class="value">${escapeHtml(d.libelle)}</div></div>
-                <div><div class="muted">Unité</div><div class="value">${escapeHtml(d.unite)}</div></div>
-                <div><div class="muted">Quantité</div><div class="value">${escapeHtml(d.quantite)}</div></div>
-                <div><div class="muted">Prix</div><div class="value">${escapeHtml(d.prix_unitaire)}</div></div>
-                <div><div class="muted">Description</div><div class="value">${escapeHtml(d.description)}</div></div>
-                <div class="actions">
-                    <button type="button" class="btn btn-light" onclick="editDetail(${index})">Modifier</button>
-                    <button type="button" class="btn btn-danger" onclick="deleteDetail(${index})">Supprimer</button>
-                </div>
-            `;
+            item.innerHTML =
+                '<div><div class="muted">Libellé</div><div class="value">' + escapeHtml(d.libelle) + '</div></div>' +
+                '<div><div class="muted">Unité</div><div class="value">' + escapeHtml(d.unite) + '</div></div>' +
+                '<div><div class="muted">Quantité</div><div class="value">' + escapeHtml(d.quantite) + '</div></div>' +
+                '<div><div class="muted">Prix</div><div class="value">' + escapeHtml(d.prix_unitaire) + '</div></div>' +
+                '<div><div class="muted">Description</div><div class="value">' + escapeHtml(d.description) + '</div></div>' +
+                '<div class="actions">' +
+                    '<button type="button" class="btn btn-light" onclick="editDetail(' + index + ')">Modifier</button>' +
+                    '<button type="button" class="btn btn-danger" onclick="deleteDetail(' + index + ')">Supprimer</button>' +
+                '</div>';
             container.appendChild(item);
         });
     }
@@ -289,13 +359,13 @@
         hiddenDetails.innerHTML = '';
 
         details.forEach((d, index) => {
-            hiddenDetails.insertAdjacentHTML('beforeend', `
-                <input type="hidden" name="libelles" value="${escapeAttribute(d.libelle)}">
-                <input type="hidden" name="unites" value="${escapeAttribute(d.unite)}">
-                <input type="hidden" name="quantites" value="${escapeAttribute(d.quantite)}">
-                <input type="hidden" name="prixUnitaires" value="${escapeAttribute(d.prix_unitaire)}">
-                <input type="hidden" name="descriptions" value="${escapeAttribute(d.description)}">
-            `);
+            hiddenDetails.insertAdjacentHTML('beforeend',
+                '<input type="hidden" name="libelles" value="' + escapeAttribute(d.libelle) + '">' +
+                '<input type="hidden" name="unites" value="' + escapeAttribute(d.unite) + '">' +
+                '<input type="hidden" name="quantites" value="' + escapeAttribute(d.quantite) + '">' +
+                '<input type="hidden" name="prixUnitaires" value="' + escapeAttribute(d.prix_unitaire) + '">' +
+                '<input type="hidden" name="descriptions" value="' + escapeAttribute(d.description) + '">'
+            );
         });
 
         document.getElementById('devisForm').submit();

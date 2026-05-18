@@ -3,6 +3,9 @@ package edinah.springMVC.forage.Model;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -10,12 +13,13 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "type_devis")
 public class TypeDevis {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_type_devis")
     private Integer idTypeDevis;
     @Column(name = "libelle")
     private String libelle;
 
-    private String sigle;
 
     public Integer getIdTypeDevis() {
         return idTypeDevis;

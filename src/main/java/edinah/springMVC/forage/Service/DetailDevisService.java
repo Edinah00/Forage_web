@@ -10,8 +10,6 @@ import java.util.List;
 public class DetailDevisService {
     @Autowired
     private DetailDevisRepository detailDevisRepository;
-    @Autowired
-    private  DetailDevis detailDevis;
 
     public DetailDevis saveDetailDevis(DetailDevis detailDevis) {
         return detailDevisRepository.save(detailDevis);

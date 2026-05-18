@@ -41,6 +41,15 @@ CREATE TABLE IF NOT EXISTS status(
     libelle VARCHAR(50)
 );
 
+INSERT IGNORE INTO status (id_status, libelle) VALUES
+  (1, 'Demande Cree'),
+  (2, 'Demande Accepte'),
+  (3, 'Demande Refuse'),
+  (4, 'Devis Etude Cree'),
+  (5, 'Devis Etude Refuse'),
+  (6, 'Devis Forage Cree'),
+  (7, 'Devis Forage Refuse');
+
 CREATE TABLE IF NOT EXISTS demande_status (
     id_demande INT,
     id_status INT,
@@ -54,7 +63,7 @@ CREATE TABLE IF NOT EXISTS demande_status (
     id_type_devis INT AUTO_INCREMENT PRIMARY KEY,
     libelle VARCHAR(50) NOT NULL
 );
- 
+insert into type_devis(libelle) values ('Etude'),('Forage');
 CREATE TABLE IF NOT EXISTS devis (
     id_devis     INT AUTO_INCREMENT PRIMARY KEY,
     id_demande   INT          NOT NULL,

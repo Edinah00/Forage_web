@@ -55,6 +55,11 @@ public class DemandeController {
         model.addAttribute("demande", demandeService.getDemande(id));
         return "detail_demande";
     }
+    @GetMapping("/demande/{ref}")
+    public String detailDemande(@PathVariable("ref") String ref, Model model) {
+        model.addAttribute("demande", demandeService.getDemandeByRef(ref));
+        return "detail_demande";
+    }
 
     @GetMapping("/demande/modifier/{id}")
     public String afficherFormulaireModification(@PathVariable("id") int id, Model model) {

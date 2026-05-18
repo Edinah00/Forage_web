@@ -3,6 +3,7 @@ package edinah.springMVC.forage.Controller;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import edinah.springMVC.forage.Model.Demande;
@@ -45,6 +48,7 @@ public class DevisController {
     public String nouveau(Model model) {
         model.addAttribute("devis", new Devis());
         model.addAttribute("typesDevis", devisService.findAllTypeDevis());
+        model.addAttribute("demandes", demandeService.listerDemandes());
         return "devis";
     }
 
@@ -78,12 +82,40 @@ public class DevisController {
 
     @GetMapping("/demande/{ref}")
     @ResponseBody
-    public Map<String, Object> demandeParRef(@PathVariable("ref") String ref) {
+    public ResponseEntity<String> demandeParRef(@PathVariable("ref") String ref) {
         Demande demande = demandeService.getDemandeByRef(ref);
-        Map<String, Object> response = new HashMap<>();
-        response.put("found", demande != null);
-        response.put("demande", demande);
-        return response;
+        if (demande == null) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"found\":false,\"demande\":null}");
+        }
+
+        String json = String.format(Locale.ROOT,
+                "{\"found\":true,\"demande\":{\"id_demande\":%d,\"ref_demande\":%s,\"id_client\":%s,\"id_commune\":%s,\"lieu_demande\":%s,\"date_demande\":%s}}",
+                demande.getId_demande(),
+                jsonString(demande.getRef_demande()),
+                demande.getId_client() == null ? "null" : demande.getId_client().toString(),
+                demande.getId_commune() == null ? "null" : demande.getId_commune().toString(),
+                jsonString(demande.getLieu_demande()),
+                jsonString(demande.getDate_demande() == null ? null : demande.getDate_demande().toString())
+        );
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(json);
+    }
+
+    private String jsonString(String value) {
+        if (value == null) {
+            return "null";
+        }
+        return "\"" + value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\b", "\\b")
+                .replace("\f", "\\f")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t") + "\"";
     }
 
     @PostMapping("/ajouter")
