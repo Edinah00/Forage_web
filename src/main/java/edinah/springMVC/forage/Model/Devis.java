@@ -3,7 +3,6 @@ package edinah.springMVC.forage.Model;
 import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "devis")

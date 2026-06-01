@@ -328,6 +328,7 @@ footer{
       <a href="${pageContext.request.contextPath}/accueil">Accueil</a>
       <a href="${pageContext.request.contextPath}/formulaire">Demandes</a>
       <a href="${pageContext.request.contextPath}/devis">Devis</a>
+      <a href="${pageContext.request.contextPath}/form_demande_status">Status</a>
     </div>
   </nav>
 

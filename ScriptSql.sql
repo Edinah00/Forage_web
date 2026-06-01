@@ -41,6 +41,16 @@ CREATE TABLE IF NOT EXISTS status(
     libelle VARCHAR(50)
 );
 
+CREATE TABLE IF NOT EXISTS parametre (
+    id_parametre INT AUTO_INCREMENT PRIMARY KEY,
+    id_status1 INT NOT NULL,
+    id_status2 INT NOT NULL,
+    duree BIGINT NOT NULL,
+    couleur VARCHAR(20) NOT NULL,
+    FOREIGN KEY (id_status1) REFERENCES status(id_status),
+    FOREIGN KEY (id_status2) REFERENCES status(id_status)
+);
+
 INSERT IGNORE INTO status (id_status, libelle) VALUES
   (1, 'Demande Cree'),
   (2, 'Demande Accepte'),
@@ -50,9 +60,15 @@ INSERT IGNORE INTO status (id_status, libelle) VALUES
   (6, 'Devis Forage Cree'),
   (7, 'Devis Forage Refuse');
 
+INSERT IGNORE INTO parametre (id_parametre, id_status1, id_status2, duree, couleur) VALUES
+  (1, 1, 2, 50, 'vert'),
+  (2, 1, 2, 220, 'jaune'),
+  (3, 1, 2, 350, 'rouge');
+
 CREATE TABLE IF NOT EXISTS demande_status (
     id_demande INT,
     id_status INT,
+    observation VARCHAR(100),
     date_status DATETIME,
     PRIMARY KEY (id_demande, id_status),
     FOREIGN KEY (id_demande) REFERENCES demande(id_demande),

@@ -14,8 +14,10 @@
            http://www.springframework.org/schema/data/jpa
            http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-    <!-- Scan des composants -->
-    <context:component-scan base-package="edinah.springMVC.forage"/>
+    <!-- Scan des composants (Services et Repositories) -->
+    <context:component-scan base-package="edinah.springMVC.forage">
+        <context:exclude-filter type="regex" expression=".*Controller"/>
+    </context:component-scan>
 
     <!-- Connexion MariaDB -->
     <bean id="dataSource"

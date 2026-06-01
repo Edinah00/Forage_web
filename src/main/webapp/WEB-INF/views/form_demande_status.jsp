@@ -1,11 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c"    uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn"   uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Demandes — Forage Web</title>
+<title>Statuts des demandes — Forage Web</title>
 <style>
 /* ─── Reset ─────────────────────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -99,9 +100,9 @@ tbody tr:hover{background:#f8faff}
   <a class="navbar-brand" href="${pageContext.request.contextPath}/accueil">Forage<span>Web</span></a>
   <div class="navbar-links">
     <a href="${pageContext.request.contextPath}/accueil">Accueil</a>
-    <a class="active" href="${pageContext.request.contextPath}/formulaire">Demandes</a>
+    <a href="${pageContext.request.contextPath}/formulaire">Demandes</a>
     <a href="${pageContext.request.contextPath}/devis">Devis</a>
-    <a href="${pageContext.request.contextPath}/form_demande_status">Status</a>
+    <a class="active" href="${pageContext.request.contextPath}/form_demande_status">Status</a>
   </div>
 </nav>
 
@@ -110,8 +111,8 @@ tbody tr:hover{background:#f8faff}
   <!-- Page header -->
   <div class="page-header">
     <div>
-      <h1>📋 Gestion des demandes</h1>
-      <p>Ajoutez une demande et consultez / gérez la liste ci-dessous.</p>
+      <h1>📋 Gestion des demandes - Statut</h1>
+      <p>Ajoutez un statut à une demande et consultez la liste ci-dessous.</p>
     </div>
   </div>
 
@@ -125,99 +126,101 @@ tbody tr:hover{background:#f8faff}
 
   <!-- ── Formulaire ajout ──────────────────────────────────────────── -->
   <div class="card">
-    <h2>➕ Ajouter une demande</h2>
+    <h2>➕ Ajouter un statut de demande</h2>
 
-    <%-- Le modelAttribute "demande" DOIT être présent dans le model --%>
-    <form:form action="${pageContext.request.contextPath}/Ajout_demande"
-               method="post" modelAttribute="demande">
-
-      <%-- ref_demande auto-générée côté serveur, on la cache --%>
-      <form:input type="text" path="ref_demande"/>
+    <form:form action="${pageContext.request.contextPath}/demande_status/ajouter"
+               method="post" modelAttribute="demandeStatus">
 
       <div class="form-grid">
+
+        <!-- Référence demande -->
         <div class="field">
-          <label for="id_client">Demandeur</label>
-          <form:select path="id_client" id="id_client">
-            <form:option value="">— Choisir un client —</form:option>
-            <c:forEach var="client" items="${clients}">
-              <form:option value="${client.idClient}">${client.nomClient}</form:option>
+          <label for="refDemande">Référence demande <span style="color:#dc2626;">*</span></label>
+          <select id="refDemande" onchange="syncDemandeId(this)">
+            <option value="">-- choisir une référence --</option>
+            <c:forEach items="${demandes}" var="demande">
+              <option value="${demande.id_demande}" data-ref="${fn:trim(demande.ref_demande)}">
+                ${fn:trim(demande.ref_demande)}
+              </option>
+            </c:forEach>
+          </select>
+          <form:input path="id_demande" type="hidden" id="idDemandeInput" />
+        </div>
+
+        <!-- Status -->
+        <div class="field">
+          <label for="idStatus">Statut <span style="color:#dc2626;">*</span></label>
+          <form:select path="id_status" id="idStatus">
+            <form:option value="">-- choisir un statut --</form:option>
+            <c:forEach items="${statuses}" var="status">
+              <form:option value="${status.value}">${status.key}</form:option>
             </c:forEach>
           </form:select>
         </div>
 
+        <!-- Date et heure -->
         <div class="field">
-          <label for="date_demande">Date</label>
-          <form:input path="date_demande" id="date_demande" type="date"/>
+          <label for="dateStatus">Date et heure <span style="color:#dc2626;">*</span></label>
+          <form:input path="date_status" type="datetime-local" id="dateStatus" />
         </div>
 
-        <div class="field">
-          <label for="lieu_demande">Lieu</label>
-          <form:input path="lieu_demande" id="lieu_demande" placeholder="Ex : Antananarivo"/>
+        <!-- Observation -->
+        <div class="field full">
+          <label for="observation">Observation</label>
+          <form:textarea path="observation" id="observation" placeholder="Entrez vos observations (optionnel)"></form:textarea>
         </div>
 
-        <div class="field">
-          <label for="id_commune">Commune</label>
-          <form:select path="id_commune" id="id_commune">
-            <form:option value="">— Choisir une commune —</form:option>
-            <c:forEach var="commune" items="${communes}">
-              <form:option value="${commune.idCommune}">${commune.nomCommune}</form:option>
-            </c:forEach>
-          </form:select>
-        </div>
       </div>
+
+      <div id="chargementMessage" class="muted"></div>
 
       <div class="actions">
-        <input class="btn btn-primary" type="submit" value="✔ Enregistrer la demande"/>
+        <a class="btn btn-ghost" href="${pageContext.request.contextPath}/demande_status/liste">Voir la liste</a>
+        <button type="submit" class="btn btn-primary">Valider</button>
       </div>
+
     </form:form>
+
   </div>
 
-  <!-- ── Liste des demandes ────────────────────────────────────────── -->
-  <div class="card">
-    <h2>📑 Liste des demandes</h2>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th><th>Référence</th><th>Client</th>
-            <th>Lieu</th><th>Commune</th><th>Date</th><th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <c:choose>
-            <c:when test="${not empty demandes}">
-              <c:forEach var="d" items="${demandes}">
-                <tr>
-                  <td><span class="badge badge-blue">#${d.id_demande}</span></td>
-                  <td>${d.ref_demande}</td>
-                  <td>${d.id_client}</td>
-                  <td>${d.lieu_demande}</td>
-                  <td>${d.id_commune}</td>
-                  <td>${d.date_demande}</td>
-                  <td>
-                    <div class="row-actions">
-                      <a class="btn btn-ghost" href="${pageContext.request.contextPath}/demande/${d.id_demande}">👁 Voir</a>
-                      <a class="btn btn-ghost" href="${pageContext.request.contextPath}/demande/modifier/${d.id_demande}">✏️ Modifier</a>
-                      <a class="btn btn-success" href="${pageContext.request.contextPath}/demande/valider/${d.id_demande}"
-                         onclick="return confirm('Accepter cette demande ?')">✔ Accepter</a>
-                      <a class="btn btn-danger" href="${pageContext.request.contextPath}/demande/refuser/${d.id_demande}"
-                         onclick="return confirm('Refuser cette demande ?')">✘ Refuser</a>
-                      <a class="btn btn-danger" href="${pageContext.request.contextPath}/demande/supprimer/${d.id_demande}"
-                         onclick="return confirm('Supprimer cette demande ?')">🗑</a>
-                    </div>
-                  </td>
-                </tr>
-              </c:forEach>
-            </c:when>
-            <c:otherwise>
-              <tr><td class="empty" colspan="7">Aucune demande enregistrée.</td></tr>
-            </c:otherwise>
-          </c:choose>
-        </tbody>
-      </table>
-    </div>
-  </div>
+<script>
+  window.syncDemandeId = function (selectElement) {
+    const message = document.getElementById('chargementMessage');
+    const idDemandeInput = document.getElementById('idDemandeInput');
+    const selectedOption = selectElement?.selectedOptions?.[0];
+    const demandeId = selectedOption ? selectedOption.value : '';
+    const refDemande = selectedOption ? (selectedOption.dataset.ref || selectedOption.textContent.trim()) : '';
 
-</div><!-- /page -->
+    if (!demandeId) {
+      idDemandeInput.value = '';
+      message.textContent = '';
+      return;
+    }
+
+    idDemandeInput.value = demandeId;
+    message.textContent = `Demande sélectionnée : ${refDemande} (ID ${demandeId})`;
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialiser la date/heure à maintenant si vide
+    const dateInput = document.getElementById('dateStatus');
+    if (dateInput && !dateInput.value) {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      dateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    // Synchroniser la demande déjà affichée dans le select au chargement
+    const demandeSelect = document.getElementById('refDemande');
+    if (demandeSelect && demandeSelect.value) {
+      window.syncDemandeId(demandeSelect);
+    }
+  });
+</script>
+
 </body>
 </html>

@@ -8,7 +8,6 @@ import edinah.springMVC.forage.Repository.DemandeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import edinah.springMVC.forage.Service.DemandeStatusService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -45,7 +44,14 @@ public class DemandeService {
     }
 
     public Demande getDemandeByRef(String refDemande) {
-        return demandeRepository.findByRefDemande(refDemande).orElse(null);
+        if (refDemande == null) {
+            return null;
+        }
+        String refNormalisee = refDemande.trim();
+        if (refNormalisee.isEmpty()) {
+            return null;
+        }
+        return demandeRepository.findByRefDemande(refNormalisee).orElse(null);
     }
 
     @Transactional

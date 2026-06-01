@@ -1,8 +1,5 @@
 package edinah.springMVC.forage.Model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

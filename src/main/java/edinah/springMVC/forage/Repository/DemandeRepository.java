@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DemandeRepository extends JpaRepository<Demande, Integer> {
-    @Query("SELECT d FROM Demande d WHERE d.ref_demande = :refDemande")
+    @Query("SELECT d FROM Demande d WHERE TRIM(d.ref_demande) = TRIM(:refDemande)")
     Optional<Demande> findByRefDemande(@Param("refDemande") String refDemande);
 }

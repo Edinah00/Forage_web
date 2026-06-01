@@ -1,13 +1,10 @@
 package edinah.springMVC.forage.Model;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
-    private TypeDevis typeDevis;
-    private DemandeStatusId demandeStatusId;
-
+    
     public Map<String, Integer> MapperType() {
 
         Map<String, Integer> map = new HashMap<>();

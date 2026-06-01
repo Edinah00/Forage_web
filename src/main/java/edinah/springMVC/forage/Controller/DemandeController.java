@@ -50,12 +50,13 @@ public class DemandeController {
         return "liste_demande";
     }
 
-    @GetMapping("/demande/{id}")
+    @GetMapping("/demande/{id:\\d+}")
     public String detailDemande(@PathVariable("id") int id, Model model) {
         model.addAttribute("demande", demandeService.getDemande(id));
         return "detail_demande";
     }
-    @GetMapping("/demande/{ref}")
+
+    @GetMapping("/demande/ref/{ref}")
     public String detailDemande(@PathVariable("ref") String ref, Model model) {
         model.addAttribute("demande", demandeService.getDemandeByRef(ref));
         return "detail_demande";

@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edinah.springMVC.forage.Model.Commune;
-import edinah.springMVC.forage.Model.Demande;
 import edinah.springMVC.forage.Repository.CommuneRepository;
-import jakarta.transaction.Transactional;
 
 @Service
 public class CommuneService {
