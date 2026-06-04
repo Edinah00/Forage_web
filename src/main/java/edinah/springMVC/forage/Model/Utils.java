@@ -21,11 +21,10 @@ public class Utils {
 
         map.put("DC", 1);
         map.put("DA", 2);
-        map.put("DR", 3);
-        map.put("DEC", 4);
-        map.put("DER", 5);
-        map.put("DFC", 6);
-        map.put("DFR", 7);
+        map.put("DEC", 3);
+        map.put("DER", 4);
+        map.put("DFC", 5);
+        map.put("DFR", 6);
 
         return map;
     }

@@ -1,23 +1,35 @@
 package edinah.springMVC.forage.Model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Transient;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
+/**
+ * CORRECTIONS :
+ *  - PK séquentielle (id INT AUTO_INCREMENT) au lieu de la clé composite (id_demande, id_status)
+ *    → permet d'assigner plusieurs fois le même statut à une demande (ex: deux refus successifs)
+ *  - @Transient duree_travail_minutes et couleur conservés pour le calcul à la volée
+ */
 @Entity
 @Table(name = "demande_status")
 public class DemandeStatus {
 
-    @EmbeddedId
-    private DemandeStatusId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(name = "observation")
+    @Column(name = "id_demande", nullable = false)
+    private Integer id_demande;
+
+    @Column(name = "id_status", nullable = false)
+    private Integer id_status;
+
+    @Column(name = "observation", length = 255)
     private String observation;
 
-    @Column(name = "date_status")
+    @Column(name = "date_status", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime date_status;
 
     @Transient
@@ -26,65 +38,28 @@ public class DemandeStatus {
     @Transient
     private String couleur;
 
-    public DemandeStatusId getId() {
-        return id;
-    }
+    // ── Getters / Setters ─────────────────────────────────────────
 
-    public void setId(DemandeStatusId id) {
-        this.id = id;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public LocalDateTime getDate_status() {
-        return date_status;
-    }
+    public Integer getId_demande() { return id_demande; }
+    public void setId_demande(Integer id_demande) { this.id_demande = id_demande; }
 
-    public void setDate_status(LocalDateTime date_status) {
-        this.date_status = date_status;
-    }
+    public Integer getId_status() { return id_status; }
+    public void setId_status(Integer id_status) { this.id_status = id_status; }
 
-    public Integer getId_demande() {
-        return id != null ? id.getId_demande() : null;
-    }
+    public String getObservation() { return observation; }
+    public void setObservation(String observation) { this.observation = observation; }
 
-    public Integer getId_status() {
-        return id != null ? id.getId_status() : null;
-    }
+    public LocalDateTime getDate_status() { return date_status; }
+    public void setDate_status(LocalDateTime date_status) { this.date_status = date_status; }
 
-    public void setId_demande(Integer id_demande) {
-        if (id == null) {
-            id = new DemandeStatusId();
-        }
-        id.setId_demande(id_demande);
-    }
-
-    public void setId_status(Integer id_status) {
-        if (id == null) {
-            id = new DemandeStatusId();
-        }
-        id.setId_status(id_status);
-    }
-    public String getObservation() {
-        return observation;
-    }
-    public void setObservation(String observation) {
-        this.observation = observation;
-    }
-
-    public Long getDuree_travail_minutes() {
-        return duree_travail_minutes;
-    }
-
+    public Long getDuree_travail_minutes() { return duree_travail_minutes; }
     public void setDuree_travail_minutes(Long duree_travail_minutes) {
         this.duree_travail_minutes = duree_travail_minutes;
     }
 
-    public String getCouleur() {
-        return couleur;
-    }
-
-    public void setCouleur(String couleur) {
-        this.couleur = couleur;
-    }
-    
-    
+    public String getCouleur() { return couleur; }
+    public void setCouleur(String couleur) { this.couleur = couleur; }
 }

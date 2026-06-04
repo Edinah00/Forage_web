@@ -9,18 +9,23 @@ import org.springframework.stereotype.Repository;
 
 import edinah.springMVC.forage.Model.Parametre;
 
+/**
+ * Logique couleur basée UNIQUEMENT sur la durée travaillée :
+ *  - Chercher les seuils <= durée travaillée
+ *  - Prendre le plus HAUT (celui qui s'applique vraiment)
+ *  Exemple : durée = 120 min
+ *    Seuils : 100 (vert), 150 (jaune), 200 (rouge)
+ *    Candidats : 100 <= 120 → {100}
+ *    Résultat : 100 (vert) ✓
+ */
 @Repository
 public interface ParametreRepository extends JpaRepository<Parametre, Integer> {
 
     @Query("""
             SELECT p FROM Parametre p
-            WHERE p.idStatus1 = :idStatus1
-              AND p.idStatus2 = :idStatus2
-              AND p.duree <= :duree
+            WHERE p.duree <= :duree
             ORDER BY p.duree DESC
             """)
     List<Parametre> findApplicableParams(
-            @Param("idStatus1") Integer idStatus1,
-            @Param("idStatus2") Integer idStatus2,
             @Param("duree") Long duree);
 }

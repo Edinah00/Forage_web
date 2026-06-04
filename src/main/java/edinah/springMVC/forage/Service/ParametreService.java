@@ -14,12 +14,9 @@ public class ParametreService {
     @Autowired
     private ParametreRepository parametreRepository;
 
-    public String trouverCouleur(Integer idStatus1, Integer idStatus2, Long duree) {
-        if (idStatus1 == null || idStatus2 == null || duree == null) {
-            return null;
-        }
-
-        List<Parametre> params = parametreRepository.findApplicableParams(idStatus1, idStatus2, duree);
+    public String trouverCouleur(Long duree) {
+        if (duree == null) return null;
+        List<Parametre> params = parametreRepository.findApplicableParams(duree);
         return params.isEmpty() ? null : params.get(0).getCouleur();
     }
 }

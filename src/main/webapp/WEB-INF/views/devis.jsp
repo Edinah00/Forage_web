@@ -1,68 +1,105 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Nouveau devis</title>
-    <style>
-        body { font-family: Arial, Helvetica, sans-serif; background: linear-gradient(135deg, #f3f7ff, #eef7f0); margin: 0; padding: 28px; color: #1f2937; }
-        .card { max-width: 1100px; margin: 0 auto; background: #fff; border-radius: 18px; padding: 24px; box-shadow: 0 16px 36px rgba(15,23,42,.10); }
-        h2 { margin-top: 0; }
-        .grid { display: grid; gap: 16px; }
-        .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        label { display: block; font-weight: 700; margin-bottom: 6px; color: #334155; }
-        input, select, textarea { width: 100%; padding: 11px 12px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 14px; }
-        textarea { min-height: 90px; resize: vertical; }
-        .btn { border: 0; border-radius: 10px; padding: 11px 16px; cursor: pointer; font-weight: 700; }
-        .btn-primary { background: #2563eb; color: #fff; }
-        .btn-secondary { background: #0f766e; color: #fff; }
-        .btn-danger { background: #dc2626; color: #fff; }
-        .btn-light { background: #e2e8f0; color: #0f172a; }
-        .section { margin-top: 22px; padding-top: 22px; border-top: 1px solid #e2e8f0; }
-        .muted { color: #64748b; font-size: 13px; }
-        .panel { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px; }
-        .detail-list { margin-top: 14px; display: grid; gap: 10px; }
-        .detail-item { background: #fff; border: 1px solid #dbe4f0; border-radius: 12px; padding: 12px; display: grid; grid-template-columns: 1.2fr .7fr .7fr .7fr 1.2fr auto; gap: 10px; align-items: end; }
-        .detail-item .value { font-size: 14px; }
-        .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-        .alert { padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; }
-        .alert-success { background: #ecfdf5; color: #065f46; }
-        .alert-error { background: #fef2f2; color: #991b1b; }
-        .search-error {
-            margin-top: 10px;
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1px solid #fca5a5;
-            background: linear-gradient(135deg, #fff1f2, #ffe4e6);
-            color: #9f1239;
-            font-weight: 700;
-            display: none;
-        }
-        .search-error.visible { display: block; }
-        .search-error small {
-            display: block;
-            margin-top: 4px;
-            font-weight: 400;
-            color: #be123c;
-        }
-        .input-error {
-            border-color: #f87171 !important;
-            background: #fff1f2;
-            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.14);
-        }
-        .hidden { display: none; }
-        .table { width: 100%; border-collapse: collapse; margin-top: 14px; }
-        .table th, .table td { border-bottom: 1px solid #e2e8f0; padding: 10px 8px; text-align: left; vertical-align: top; }
-        .badge { display: inline-block; background: #dbeafe; color: #1d4ed8; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
-        .topbar { display:flex; justify-content:space-between; align-items:center; gap: 12px; margin-bottom: 18px; }
-        @media (max-width: 900px) {
-            .two, .three, .detail-item { grid-template-columns: 1fr; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Devis — ForageWeb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117; --surface:#161b22; --surface2:#21262d;
+  --border:#30363d; --border-light:#21262d;
+  --primary:#2f81f7; --primary-dim:rgba(47,129,247,.15);
+  --success:#3fb950; --success-dim:rgba(63,185,80,.15);
+  --danger:#f85149;  --danger-dim:rgba(248,81,73,.15);
+  --warn:#d29922;    --warn-dim:rgba(210,153,34,.15);
+  --text:#e6edf3; --muted:#8b949e; --muted2:#6e7681;
+  --radius:12px; --radius-sm:8px;
+  --font-head:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
+.nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--font-head);font-size:1.15rem;color:var(--text);text-decoration:none;letter-spacing:-.02em}
+.brand em{color:var(--primary);font-style:normal}
+.nav-links{display:flex;gap:4px}
+.nav-links a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:var(--radius-sm);font-size:.9rem;font-weight:500;transition:all .15s}
+.nav-links a:hover{background:var(--surface2);color:var(--text)}
+.nav-links a.active{background:var(--primary-dim);color:var(--primary)}
+.page{max-width:1180px;margin:32px auto;padding:0 20px;display:flex;flex-direction:column;gap:24px}
+.page-title{font-family:var(--font-head);font-size:1.8rem;letter-spacing:-.03em}
+.page-sub{color:var(--muted);margin-top:4px;font-size:.95rem}
+.alert{padding:14px 18px;border-radius:var(--radius);font-size:.95rem;display:flex;align-items:center;gap:10px;border:1px solid}
+.alert-ok{background:var(--success-dim);color:var(--success);border-color:rgba(63,185,80,.3)}
+.alert-err{background:var(--danger-dim);color:var(--danger);border-color:rgba(248,81,73,.3)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.card-title{font-family:var(--font-head);font-size:1.05rem;letter-spacing:-.02em}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{font-size:.85rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.field input,.field select,.field textarea{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);font-family:var(--font-body);font-size:.95rem;outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-dim)}
+.field select option{background:var(--surface2)}
+.form-actions{margin-top:20px;display:flex;justify-content:flex-end;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.9rem;font-weight:600;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#388bfd;transform:translateY(-1px);box-shadow:0 4px 14px rgba(47,129,247,.3)}
+.btn-ghost{background:transparent;color:var(--muted);border-color:var(--border)}
+.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+.btn-sm{padding:6px 12px;font-size:.83rem}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th{padding:10px 14px;text-align:left;font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)}
+td{padding:12px 14px;border-bottom:1px solid var(--border-light);vertical-align:middle;font-size:.93rem}
+tbody tr:hover{background:var(--surface2)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:.8rem;font-weight:600}
+.badge-blue{background:var(--primary-dim);color:var(--primary)}
+.badge-gray{background:rgba(139,148,158,.15);color:var(--muted)}
+.badge-red{background:var(--danger-dim);color:var(--danger)}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.section{margin-top:12px;padding-top:12px}
+.detail-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;display:grid;grid-template-columns:1.2fr .7fr .7fr .7fr 1.2fr auto;gap:10px;align-items:center}
+.muted{color:var(--muted);font-size:.9rem}
+.hidden{display:none}
+.search-error{margin-top:8px;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid rgba(248,81,73,.3);background:var(--danger-dim);color:var(--danger);font-size:.9rem;display:none}
+.search-error.visible{display:block}
+.input-error{border-color:var(--danger)!important;box-shadow:0 0 0 3px var(--danger-dim)}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}.detail-item{grid-template-columns:1fr}.nav{padding:0 14px}.page{padding:0 12px;margin:16px auto}}
+</style>
 </head>
 <body>
+
+<nav class="nav">
+  <a class="brand" href="${pageContext.request.contextPath}/accueil">Forage<em>Web</em></a>
+  <div class="nav-links">
+    <a href="${pageContext.request.contextPath}/accueil">Accueil</a>
+    <a href="${pageContext.request.contextPath}/formulaire">Demandes</a>
+    <a href="${pageContext.request.contextPath}/devis" class="active">Devis</a>
+    <a href="${pageContext.request.contextPath}/form_demande_status">Statuts</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div>
+    <h1 class="page-title">Devis</h1>
+    <p class="page-sub">Créez et gérez les devis associés aux demandes.</p>
+  </div>
+
+  <c:if test="${not empty message}">
+    <div class="alert alert-ok">✅ ${message}</div>
+  </c:if>
+  <c:if test="${not empty error}">
+    <div class="alert alert-err">❌ ${error}</div>
+  </c:if>
+
 <div class="card">
+    <div class="card-header">
+      <span class="card-title">Nouveau devis</span>
+    </div>
     <div class="topbar">
         <div>
             <h2>Création de devis</h2>
@@ -98,7 +135,7 @@
                 <select id="typeDevis">
                     <option value="">-- choisir --</option>
                     <c:forEach items="${typesDevis}" var="type">
-                        <option value="${type.idTypeDevis}">${type.libelle}</option>
+                        <option value="${type.idTypeDevis}" <c:if test="${type.idTypeDevis == 2}">id="typeForageOption"</c:if>>${type.libelle}</option>
                     </c:forEach>
                 </select>
             </div>
@@ -210,6 +247,7 @@
                     refInput.classList.add('input-error');
                     refError.classList.add('visible');
                     box.classList.remove('hidden');
+                    mettreAJourForage(false);
                     document.getElementById('demandeId').textContent = 'Introuvable';
                     document.getElementById('demandeRef').textContent = ref;
                     document.getElementById('demandeClient').textContent = '-';
@@ -220,10 +258,12 @@
                 }
 
                 const d = data.demande;
+                const peutForage = !!data.peut_forage;
                 message.textContent = 'Demande chargée.';
                 refInput.classList.remove('input-error');
                 refError.classList.remove('visible');
                 box.classList.remove('hidden');
+                mettreAJourForage(peutForage);
                 document.getElementById('demandeId').textContent = d.id_demande ?? '';
                 document.getElementById('demandeRef').textContent = d.ref_demande ?? '';
                 document.getElementById('demandeClient').textContent = d.id_client ?? '';
@@ -336,6 +376,7 @@
     function soumettreDevis() {
         const ref = document.getElementById('refDemande').value.trim();
         const idType = document.getElementById('typeDevis').value;
+        const forageOption = document.getElementById('typeForageOption');
 
         if (!ref) {
             alert('La référence de demande est obligatoire.');
@@ -344,6 +385,11 @@
 
         if (!idType) {
             alert('Le type de devis est obligatoire.');
+            return;
+        }
+
+        if (forageOption && forageOption.disabled && String(idType) === String(forageOption.value)) {
+            alert('Le devis Forage n’est pas encore autorisé pour cette demande.');
             return;
         }
 
@@ -382,6 +428,22 @@
 
     function escapeAttribute(value) {
         return escapeHtml(value).replaceAll('`', '&#096;');
+    }
+
+    function mettreAJourForage(autorise) {
+        const forageOption = document.getElementById('typeForageOption');
+        if (!forageOption) {
+            return;
+        }
+        forageOption.disabled = !autorise;
+        forageOption.title = autorise
+            ? ''
+            : 'Disponible seulement après le statut DEC';
+
+        const typeSelect = document.getElementById('typeDevis');
+        if (!autorise && String(typeSelect.value) === String(forageOption.value)) {
+            typeSelect.value = '';
+        }
     }
 
     renderDetails();

@@ -60,7 +60,7 @@ public class DevisService {
             detail.setId_devis(savedDevis.getIdDevis());
             detailDevisService.saveDetailDevis(detail);
         }
-
+        
         Utils utils = new Utils();
         int idStatus = utils.ChercherIdStatus(typeDevis);
 

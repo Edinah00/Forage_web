@@ -17,10 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import edinah.springMVC.forage.Model.Demande;
+import edinah.springMVC.forage.Model.DemandeStatus;
 import edinah.springMVC.forage.Model.DetailDevis;
 import edinah.springMVC.forage.Model.Devis;
 import edinah.springMVC.forage.Model.TypeDevis;
+import edinah.springMVC.forage.Model.Utils;
 import edinah.springMVC.forage.Service.DemandeService;
+import edinah.springMVC.forage.Service.DemandeStatusService;
 import edinah.springMVC.forage.Service.DetailDevisService;
 import edinah.springMVC.forage.Service.DevisService;
 
@@ -36,6 +39,9 @@ public class DevisController {
 
     @Autowired
     private DetailDevisService detailDevisService;
+
+    @Autowired
+    private DemandeStatusService demandeStatusService;
 
     @GetMapping
     public String index() {
@@ -85,17 +91,23 @@ public class DevisController {
         if (demande == null) {
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"found\":false,\"demande\":null}");
+                    .body("{\"found\":false,\"demande\":null,\"peut_forage\":false,\"dernier_status_id\":null}");
         }
 
+        List<DemandeStatus> historique = demandeStatusService.findByDemande(demande.getId_demande());
+        Integer dernierStatusId = historique.isEmpty() ? null : historique.get(historique.size() - 1).getId_status();
+        boolean peutForage = historique.stream().anyMatch(status -> Integer.valueOf(3).equals(status.getId_status()));
+
         String json = String.format(Locale.ROOT,
-                "{\"found\":true,\"demande\":{\"id_demande\":%d,\"ref_demande\":%s,\"id_client\":%s,\"id_commune\":%s,\"lieu_demande\":%s,\"date_demande\":%s}}",
+                "{\"found\":true,\"demande\":{\"id_demande\":%d,\"ref_demande\":%s,\"id_client\":%s,\"id_commune\":%s,\"lieu_demande\":%s,\"date_demande\":%s},\"peut_forage\":%s,\"dernier_status_id\":%s}",
                 demande.getId_demande(),
                 jsonString(demande.getRef_demande()),
                 demande.getId_client() == null ? "null" : demande.getId_client().toString(),
                 demande.getId_commune() == null ? "null" : demande.getId_commune().toString(),
                 jsonString(demande.getLieu_demande()),
-                jsonString(demande.getDate_demande() == null ? null : demande.getDate_demande().toString())
+                jsonString(demande.getDate_demande() == null ? null : demande.getDate_demande().toString()),
+                peutForage ? "true" : "false",
+                dernierStatusId == null ? "null" : dernierStatusId.toString()
         );
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -133,6 +145,9 @@ public class DevisController {
             return "redirect:/devis/nouveau";
         }
 
+        List<DemandeStatus> historique = demandeStatusService.findByDemande(demande.getId_demande());
+        boolean peutForage = historique.stream().anyMatch(status -> Integer.valueOf(3).equals(status.getId_status()));
+
         TypeDevis typeDevis = devisService.findAllTypeDevis().stream()
                 .filter(t -> t.getIdTypeDevis() != null && t.getIdTypeDevis() == idTypeDevis)
                 .findFirst()
@@ -140,6 +155,13 @@ public class DevisController {
 
         if (typeDevis == null) {
             redirectAttributes.addFlashAttribute("error", "Type de devis introuvable.");
+            return "redirect:/devis/nouveau";
+        }
+
+        Utils utils = new Utils();
+        int idStatus = utils.ChercherIdStatus(typeDevis);
+        if (idStatus == 5 && !peutForage) {
+            redirectAttributes.addFlashAttribute("error", "Le devis Forage est disponible seulement après le statut DEC.");
             return "redirect:/devis/nouveau";
         }
 
