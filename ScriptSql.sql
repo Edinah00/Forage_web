@@ -121,6 +121,7 @@ INSERT INTO status (id_status, libelle) VALUES
 -- Paramètres couleur (basés uniquement sur la durée travaillée)
 -- Logique : 100-149 min = vert, 150-199 = jaune, 200+ = rouge
 INSERT INTO parametre (id_status1, id_status2, duree, couleur) VALUES
+  (1,2,0,'bleu'),
   (1, 2, 100,  'vert'),
   (1, 2,150,  'jaune'),
   (1, 2, 200,'rouge');
