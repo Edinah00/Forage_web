@@ -357,3 +357,52 @@ tbody tr:last-child td { border-bottom: 0; }
   .metrics, .pipeline, .kanban-board { grid-template-columns: 1fr; }
   table { min-width: 720px; }
 }
+/* ── Badges couleur dynamiques (viennent de la base) ── */
+.badge-bleu  { background: var(--primary-dim);              color: var(--primary); }
+.badge-vert  { background: var(--success-dim);              color: var(--success); }
+.badge-jaune { background: var(--warn-dim);                 color: var(--warn);    }
+.badge-rouge { background: var(--danger-dim);               color: var(--danger);  }
+
+.dot-bleu    { background: var(--primary); }
+.dot-vert    { background: var(--success); }
+.dot-jaune   { background: var(--warn);    }
+.dot-rouge   { background: var(--danger);  }
+/* ── À AJOUTER À LA FIN DE app.css ──────────────────────────────
+   Badges couleur pour les statuts de demande (vert / jaune / rouge)
+   Utilisés dans liste_demande_status.jsp via class="dot-badge ${ds.couleur}"
+   ─────────────────────────────────────────────────────────────── */
+
+.dot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+/* vert */
+.dot-badge.vert {
+  background: var(--success-dim);
+  color: var(--success);
+}
+
+/* jaune */
+.dot-badge.jaune {
+  background: var(--warn-dim);
+  color: var(--warn);
+}
+
+/* rouge */
+.dot-badge.rouge {
+  background: var(--danger-dim);
+  color: var(--danger);
+}
+
+/* bleu (fallback) */
+.dot-badge.bleu {
+  background: var(--primary-dim);
+  color: var(--primary);
+}
+

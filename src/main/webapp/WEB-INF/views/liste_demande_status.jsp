@@ -61,14 +61,17 @@
                           <c:otherwise>—</c:otherwise>
                         </c:choose>
                       </td>
-                      <td>
-                        <c:choose>
-                          <c:when test="${not empty ds.couleur}">
-                            <span class="dot-badge ${ds.couleur}">${ds.couleur}</span>
-                          </c:when>
-                          <c:otherwise>—</c:otherwise>
-                        </c:choose>
-                      </td>
+                        <td>
+    <c:choose>
+      <c:when test="${not empty s.couleur}">
+        <span class="badge badge-${s.couleur}">
+          <span class="dot dot-${s.couleur}"></span>
+          ${s.couleur}
+        </span>
+      </c:when>
+      <c:otherwise><span style="color:var(--muted)">—</span></c:otherwise>
+    </c:choose>
+  </td>
                       <td>${ds.observation}</td>
                       <td>
                         <div class="row-actions">
