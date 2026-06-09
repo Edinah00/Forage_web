@@ -2,11 +2,15 @@ package edinah.springMVC.forage.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import edinah.springMVC.forage.Model.Demande;
 import edinah.springMVC.forage.Model.DemandeStatus;
 import edinah.springMVC.forage.Model.DetailDevis;
 import edinah.springMVC.forage.Model.Devis;

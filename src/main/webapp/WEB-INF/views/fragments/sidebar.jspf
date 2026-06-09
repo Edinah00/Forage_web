@@ -1,0 +1,40 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<aside class="sidebar">
+  <a class="logo-text logo" href="${pageContext.request.contextPath}/accueil">Forage<em>Web</em></a>
+
+  <div class="nav-section">
+    <span class="nav-label">Principal</span>
+    <a class="nav-item ${activeMenu == 'accueil' ? 'active' : ''}" href="${pageContext.request.contextPath}/accueil">
+      <i class="ti ti-layout-dashboard"></i> Tableau de bord
+    </a>
+    <a class="nav-item ${activeMenu == 'demandes' ? 'active' : ''}" href="${pageContext.request.contextPath}/formulaire">
+      <i class="ti ti-file-text"></i> Demandes
+    </a>
+    <a class="nav-item ${activeMenu == 'devis' ? 'active' : ''}" href="${pageContext.request.contextPath}/devis">
+      <i class="ti ti-receipt"></i> Devis
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-label">Suivi</span>
+    <a class="nav-item ${activeMenu == 'statuts' ? 'active' : ''}" href="${pageContext.request.contextPath}/demande_status/liste">
+      <i class="ti ti-timeline"></i> Statuts
+    </a>
+    <a class="nav-item" href="#">
+      <i class="ti ti-users"></i> Clients
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-label">Configuration</span>
+    <a class="nav-item" href="#">
+      <i class="ti ti-settings"></i> Paramètres
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <a class="nav-item" href="#">
+      <i class="ti ti-help-circle"></i> Aide
+    </a>
+  </div>
+</aside>

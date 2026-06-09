@@ -17,6 +17,10 @@
     <!-- Active @RequestMapping, @GetMapping etc -->
     <mvc:annotation-driven/>
 
+    <!-- Sert les fichiers statiques placés dans /webapp/resources -->
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:default-servlet-handler/>
+
     <!-- Résolution des vues JSP -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"/>
