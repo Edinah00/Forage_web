@@ -38,6 +38,8 @@
                 <th>Demande</th>
                 <th>Statut</th>
                 <th>Date</th>
+                <th>Durée</th>
+                <th>Couleur</th>
                 <th>Observation</th>
                 <th>Actions</th>
               </tr>
@@ -51,6 +53,22 @@
                       <td>${ds.id_demande}</td>
                       <td>${ds.id_status}</td>
                       <td>${ds.date_status}</td>
+                      <td>
+                        <c:choose>
+                          <c:when test="${not empty ds.duree_travail_minutes}">
+                            ${ds.duree_travail_minutes} min
+                          </c:when>
+                          <c:otherwise>—</c:otherwise>
+                        </c:choose>
+                      </td>
+                      <td>
+                        <c:choose>
+                          <c:when test="${not empty ds.couleur}">
+                            <span class="badge badge-${ds.couleur}">${ds.couleur}</span>
+                          </c:when>
+                          <c:otherwise>—</c:otherwise>
+                        </c:choose>
+                      </td>
                       <td>${ds.observation}</td>
                       <td>
                         <div class="row-actions">
@@ -63,7 +81,7 @@
                 </c:when>
                 <c:otherwise>
                   <tr>
-                    <td colspan="6"><div class="empty-state"><div class="icon">🕒</div><p>Aucun statut enregistré.</p></div></td>
+                    <td colspan="8"><div class="empty-state"><div class="icon">🕒</div><p>Aucun statut enregistré.</p></div></td>
                   </tr>
                 </c:otherwise>
               </c:choose>
